@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
                         for(DataSnapshot dataSnapshot: snapshot.getChildren()) {
                             arr[0].add(dataSnapshot.getValue(User.class));
                         }
-                        ArrayAdapter<String> ad = new ArrayAdapter<String>(MainActivity.this, R.layout.my_layout,R.id.text, getstringarray(arr[0]));
+                        CustomAdapter ad = new CustomAdapter(MainActivity.this,arr[0]);
                         li.setAdapter(ad);
                         ad.notifyDataSetChanged();
 
