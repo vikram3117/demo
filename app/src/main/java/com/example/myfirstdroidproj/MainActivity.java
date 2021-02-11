@@ -31,19 +31,41 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final ListView li = findViewById(R.id.list);
-        ArrayList<User> arr = new ArrayList<User>();
-        arr.add(new User(1, "Aryan Khanna"));
-        arr.add(new User(2, "Vikram"));
+        final EditText x=findViewById(R.id.entry);
+        final ArrayList<User>[] arr = new ArrayList[]{new ArrayList<User>()};
+        final Button jodo=findViewById(R.id.butt);
+        FirebaseDatabase fire= FirebaseDatabase.getInstance();
 
-        ArrayAdapter<String> ad = new ArrayAdapter<String>(this, R.layout.my_layout,R.id.text, getstringarray(arr));
-        li.setAdapter(ad);
-        li.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        final DatabaseReference fire_ref= fire.getReference("this");
+        jodo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String input = (String) li.getItemAtPosition(position);
-                Toast.makeText(MainActivity.this, input, Toast.LENGTH_LONG).show();
+            public void onClick(View v) {
+                fire_ref.push().setValue(new User(1,x.getText().toString()));
+                fire_ref.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        arr[0] =new ArrayList<User>();
+                        for(DataSnapshot dataSnapshot: snapshot.getChildren()) {
+                            arr[0].add(dataSnapshot.getValue(User.class));
+                        }
+                        ArrayAdapter<String> ad = new ArrayAdapter<String>(MainActivity.this, R.layout.my_layout,R.id.text, getstringarray(arr[0]));
+                        li.setAdapter(ad);
+                        ad.notifyDataSetChanged();
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+
+                });
             }
         });
+
+
+
+
 
 
     }
